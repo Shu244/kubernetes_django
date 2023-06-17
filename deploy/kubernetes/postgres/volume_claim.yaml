@@ -1,14 +1,26 @@
 kind: PersistentVolumeClaim
+
 apiVersion: v1
+
 metadata:
   name: postgres-pvc
+
   labels:
     type: local
+
 spec:
+  # The name of the StorageClass that should provision the claim.
+  # Here, the volume is manually created and not dynamically provisioned.
   storageClassName: manual
+
+  # The access mode of the volume. ReadWriteMany means the volume can be mounted as read-write by many nodes.
   accessModes:
     - ReadWriteMany
+
   resources:
     requests:
+      # The requested size of the volume, in this case, 2Gi.
       storage: 2Gi
+
+  # Specifies a specific volume by name - Kubernetes will only bind to the specified PersistentVolume.
   volumeName: postgres-pv

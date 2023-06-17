@@ -1,25 +1,38 @@
 apiVersion: apps/v1
 kind: Deployment
+
 metadata:
   name: postgres
+
 spec:
   replicas: 1
+
+  # The label selector that determines which Pods belong to the Deployment
   selector:
     matchLabels:
       app: postgres-container
+
+  # The Pod template to use for creating Pods
   template:
     metadata:
+      # Labels to apply to each Pod created from the template
       labels:
         app: postgres-container
         tier: backend
+
     spec:
+      # The containers to run in each Pod
       containers:
-        - name: postgres-container
-          image: postgres:13
+        - name: postgres-container  # The name of the container
+          image: postgres:13        # The Docker image to use for the container
+
+          # Environment variables to set in the container
           env:
+            # The POSTGRES_USER, POSTGRES_PASSWORD, and POSTGRES_DB environment variables are used by the PostgreSQL image to set up the database
             - name: POSTGRES_USER
               valueFrom:
                 secretKeyRef:
+                  # This value is fetched from the Secret named "postgres-credentials"
                   name: postgres-credentials
                   key: user
 
@@ -32,13 +45,18 @@ spec:
             - name: POSTGRES_DB
               value: kubernetes_django
 
+          # The ports to expose on the container
           ports:
             - containerPort: 5432
-          volumeMounts:
-            - name: postgres-volume-mount
-              mountPath: /var/lib/postgresql/data
 
+          # Volumes to mount into the container's filesystem
+          volumeMounts:
+            - name: postgres-volume-mount   # The name of the volume to mount
+              mountPath: /var/lib/postgresql/data  # The path in the container at which to mount the volume
+
+      # The volumes to create for the Pods
       volumes:
-        - name: postgres-volume-mount
+        - name: postgres-volume-mount   # The name of the volume
           persistentVolumeClaim:
+            # The name of the PersistentVolumeClaim to bind to the volume
             claimName: postgres-pvc

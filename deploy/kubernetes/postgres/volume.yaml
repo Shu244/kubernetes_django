@@ -1,14 +1,28 @@
 kind: PersistentVolume
+
 apiVersion: v1
+
 metadata:
   name: postgres-pv
   labels:
     type: local
+
 spec:
+  # The maximum storage capacity of the PersistentVolume
   capacity:
     storage: 2Gi
+
+  # The StorageClass to which this PersistentVolume belongs.
+  # The value 'manual' can be used to manually create the PersistentVolume
   storageClassName: manual
+
+  # The different modes that are supported for accessing the PersistentVolume.
+  # Here, it supports simultaneous read and write operations by many nodes.
   accessModes:
     - ReadWriteMany
+
+  # The path on the host machine where the data is located
   hostPath:
+    # Absolute path on the node
     path: /data/postgres-pv
+

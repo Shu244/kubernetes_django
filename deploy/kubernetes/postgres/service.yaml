@@ -1,11 +1,19 @@
 kind: Service
 apiVersion: v1
+
 metadata:
   name: postgres-service
+
 spec:
+  # A Service's selector determines which Pods are targeted by the Service.
+  # This selector targets all Pods that have the label "app: postgres-container".
   selector:
     app: postgres-container
+
+  # This Service exposes the TCP port 5432 (the standard port for PostgreSQL) on each of its Pods.
   ports:
-    - protocol: TCP
-      port: 5432
-      targetPort: 5432
+    - protocol: TCP    # The protocol used by this Service port. TCP is the default.
+      port: 5432       # The port that will be exposed by this Service.
+      targetPort: 5432 # The port on the target Pods to which the Service will send requests.
+
+  # Defaults to clusterID type of service
