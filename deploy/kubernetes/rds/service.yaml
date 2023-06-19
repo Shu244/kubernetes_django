@@ -4,4 +4,5 @@ metadata:
   name: postgres-service
 spec:
   type: ExternalName
+  # Port is not specified here since it is used during connection to service
   externalName: kubernetes-django.coagjfe4w6es.us-east-1.rds.amazonaws.com
