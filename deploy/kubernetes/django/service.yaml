@@ -1,12 +1,25 @@
-kind: Service
-apiVersion: v1
-metadata:
-  name: django-service
-spec:
-  selector:
-    pod: django
-  ports:
-  - protocol: TCP
-    port: 80
-    targetPort: 8000
-  type: LoadBalancer
+# This service uses a load balance with https
+# We do not need this since we are using ingress to route traffic our deployment.
+# We only need a clusterIP service
+#kind: Service
+#apiVersion: v1
+#metadata:
+#  name: django-service
+#  annotations:
+#    service.beta.kubernetes.io/aws-load-balancer-type: nlb
+#    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: http
+#    service.beta.kubernetes.io/aws-load-balancer-ssl-ports: https
+#    service.beta.kubernetes.io/aws-load-balancer-ssl-cert: arn:aws:acm:us-east-1:110548524137:certificate/b19d9fdc-7005-454e-aff3-a1bc6aab8096
+#spec:
+#  selector:
+#    pod: django
+#  ports:
+#  - protocol: TCP
+#    port: 80
+#    targetPort: 8000
+#    name: http
+#  - protocol: TCP
+#    port: 443
+#    targetPort: 8000
+#    name: https
+#  type: LoadBalancer

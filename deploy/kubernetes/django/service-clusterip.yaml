@@ -1,0 +1,17 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: django-service
+spec:
+  selector:
+    pod: django
+  # https port 443 is no longer necessary since SSL will be terminated by ingress
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8000
+    name: http
+  - protocol: TCP
+    port: 443
+    targetPort: 8000
+    name: https

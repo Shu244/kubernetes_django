@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: celery-beat
-          image: gitumarkk/k8_django_minikube:part_4
+          image: 110548524137.dkr.ecr.us-east-1.amazonaws.com/k8:latest
           command: ['celery', '-A', 'kubernetes_django', 'beat', '-l', 'DEBUG']
           env:
             - name: POSTGRES_USER
@@ -36,3 +36,4 @@ spec:
 
             - name: REDIS_HOST
               value: redis-service
+
