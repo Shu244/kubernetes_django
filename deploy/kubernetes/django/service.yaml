@@ -4,7 +4,7 @@
 #kind: Service
 #apiVersion: v1
 #metadata:
-#  name: django-service
+#  name: django-servive-lb
 #  annotations:
 #    service.beta.kubernetes.io/aws-load-balancer-type: nlb
 #    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: http
