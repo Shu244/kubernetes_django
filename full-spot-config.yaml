@@ -1,0 +1,164 @@
+apiVersion: kops.k8s.io/v1alpha2
+kind: Cluster
+metadata:
+  creationTimestamp: "2023-06-28T14:42:07Z"
+  name: kops.locallagoon.com
+spec:
+  nodeTerminationHandler:
+    enabled: true
+    enableSQSTerminationDraining: true
+    managedASGTag: "aws-node-termination-handler/managed"
+  clusterAutoscaler:
+    enabled: true
+    expander: random
+    balanceSimilarNodeGroups: false
+    awsUseStaticInstanceList: false
+    scaleDownUtilizationThreshold: "0.5"
+    skipNodesWithLocalStorage: true
+    skipNodesWithSystemPods: true
+    newPodScaleUpDelay: 0s
+    scaleDownDelayAfterAdd: 10m0s
+    scaleDownUnneededTime: 10m0s
+    scaleDownUnreadyTime: 20m0s
+    cpuRequest: "100m"
+    memoryRequest: "300Mi"
+  api:
+    dns: {}
+  authorization:
+    rbac: {}
+  channel: stable
+  cloudProvider: aws
+  configBase: s3://kubernetes-django-kops-example-sl/kops.locallagoon.com
+  etcdClusters:
+  - cpuRequest: 200m
+    etcdMembers:
+    - encryptedVolume: true
+      instanceGroup: control-plane-us-east-1a
+      name: a
+    memoryRequest: 100Mi
+    name: main
+  - cpuRequest: 100m
+    etcdMembers:
+    - encryptedVolume: true
+      instanceGroup: control-plane-us-east-1a
+      name: a
+    memoryRequest: 100Mi
+    name: events
+  iam:
+    allowContainerRegistry: true
+    legacy: false
+  kubeProxy:
+    enabled: false
+  kubelet:
+    anonymousAuth: false
+  kubernetesApiAccess:
+  - 0.0.0.0/0
+  - ::/0
+  kubernetesVersion: 1.26.5
+  masterPublicName: api.kops.locallagoon.com
+  networkCIDR: 172.20.0.0/16
+  networking:
+    cilium:
+      enableNodePort: true
+  nonMasqueradeCIDR: 100.64.0.0/10
+  sshAccess:
+  - 0.0.0.0/0
+  - ::/0
+  subnets:
+  - cidr: 172.20.32.0/19
+    name: us-east-1a
+    type: Public
+    zone: us-east-1a
+  topology:
+    dns:
+      type: Public
+    masters: public
+    nodes: public
+
+---
+
+apiVersion: kops.k8s.io/v1alpha2
+kind: InstanceGroup
+metadata:
+  creationTimestamp: "2023-06-28T14:42:07Z"
+  labels:
+    kops.k8s.io/cluster: kops.locallagoon.com
+  name: control-plane-us-east-1a
+spec:
+  image: 099720109477/ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-20230502
+  instanceMetadata:
+    httpPutResponseHopLimit: 3
+    httpTokens: required
+  machineType: t3.medium
+  maxSize: 1
+  minSize: 1
+  role: Master
+  subnets:
+  - us-east-1a
+
+---
+
+apiVersion: kops.k8s.io/v1alpha2
+kind: InstanceGroup
+metadata:
+  creationTimestamp: "2023-06-28T14:42:07Z"
+  labels:
+    kops.k8s.io/cluster: kops.locallagoon.com
+  name: nodes-us-east-1a
+spec:
+  image: 099720109477/ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-20230502
+  instanceMetadata:
+    httpPutResponseHopLimit: 1
+    httpTokens: required
+  machineType: t3.medium
+  maxSize: 0
+  minSize: 0
+  role: Node
+  subnets:
+  - us-east-1a
+
+---
+
+apiVersion: kops.k8s.io/v1alpha2
+kind: InstanceGroup
+metadata:
+  creationTimestamp: "2023-06-28T14:42:25Z"
+  labels:
+    kops.k8s.io/cluster: kops.locallagoon.com
+  name: spot-group
+spec:
+  cloudLabels:
+    k8s.io/cluster-autoscaler/enabled: "1"
+    k8s.io/cluster-autoscaler/kops.locallagoon.com: "1"
+  image: 099720109477/ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-20230502
+  kubelet:
+    anonymousAuth: false
+    nodeLabels:
+      kops.k8s.io/instancegroup: spot-group
+      node-role.kubernetes.io/node: ""
+  machineType: c3.large
+  manager: CloudGroup
+  maxSize: 5
+  minSize: 1
+  mixedInstancesPolicy:
+    instances:
+    - c3.large
+    - c4.large
+    - c5.large
+    - c5a.large
+    - c5ad.large
+    - c5d.large
+    - c6a.large
+    - c6i.large
+    - c6id.large
+    - c6in.large
+    - m1.medium
+    - m3.medium
+    onDemandAboveBase: 0
+    onDemandBase: 0
+    spotAllocationStrategy: capacity-optimized
+  nodeLabels:
+    kops.k8s.io/instancegroup: spot-group
+  role: Node
+  subnets:
+  - us-east-1a
