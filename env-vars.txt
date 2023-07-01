@@ -1,0 +1,4 @@
+export ROUTE53_KOPS_DNS=kops.locallagoon.com
+export BUCKET_NAME=kubernetes-django-kops-example-sl
+export AWS_REGION=us-east-1
+export SECURITY_GROUP_NAME=kubernetes_django
