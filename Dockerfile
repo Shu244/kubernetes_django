@@ -13,6 +13,8 @@ RUN apt-get update && apt-get install -y \
 ENV PROJECT_ROOT /app
 WORKDIR $PROJECT_ROOT
 
+# Installing the requirements first so it is cached as a layer.
+# If packages are not changed, subsequent builds will not need to rebuild this layer.
 COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 
